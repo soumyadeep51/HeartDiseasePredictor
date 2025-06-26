@@ -1,7 +1,8 @@
 from django.urls import path
-from .views import predict_heart_disease,home
+from .views import predict,home,result
 
 urlpatterns = [
-    path('predict/', predict_heart_disease, name='predict_heart_disease'),
-    path('home/',home,name="home")
+    path('predict/', predict, name='predict'),
+    path('',home,name="home"),
+    path('result/', result, name='result'),
 ]

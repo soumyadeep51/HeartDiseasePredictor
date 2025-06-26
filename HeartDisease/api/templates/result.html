@@ -1,0 +1,129 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Heart Disease Prediction Result</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #FEE2E2; /* Soft red background */
+            font-family: 'Arial', sans-serif;
+            color: #1F2937; /* Dark grey for readability */
+        }
+        .result-container {
+            background-color: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            width: 90%;
+            text-align: center;
+            animation: slideUp 0.6s ease-out;
+        }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .result-card {
+            background-color: #FFF7ED; /* Warm off-white */
+            border-left: 4px solid #DC2626; /* Red accent */
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .result-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.05);
+        }
+        .error-message {
+            background-color: #FEE2E2; /* Soft red for errors */
+            color: #DC2626;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+            font-weight: 500;
+        }
+        h1 {
+            color: #DC2626; /* Vibrant red for heading */
+            font-size: 2.25rem !important;
+            
+            font-weight: 900;
+            margin-bottom: 1.5rem;
+        }
+        .result-value {
+            font-size: 1.875rem;
+            font-weight: bold;
+            color: #1F2937;
+        }
+        .result-label {
+            font-size: 1.125rem;
+            color: #4B5563; /* Medium grey for labels */
+            margin-bottom: 0.5rem;
+        }
+        .back-button {
+            background-color: #10B981; /* Green for positive action */
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            text-decoration: none;
+            transition: background-color 0.3s ease;
+        }
+        .back-button:hover {
+            background-color: #059669; /* Darker green on hover */
+        }
+    </style>
+</head>
+<body>
+     
+    <div class="result-container">
+    <h1>Heart Disease Prediction</h1> 
+        {% if messages %}
+            {% for message in messages %}
+                <div class="error-message">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+        <div class="space-y-6">
+            <div class="result-card">
+                <div class="result-label">Prediction</div>
+                <div class="result-value text-red-600">{{ prediction }}</div>
+            </div>
+            <div class="result-card">
+                <div class="result-label">Probability (No Disease)</div>
+                <div class="result-value text-green-600">{{ probability_no_disease }}%</div>
+            </div>
+            <div class="result-card">
+                <div class="result-label">Probability (Disease)</div>
+                <div class="result-value text-red-600">{{ probability_disease }}%</div>
+            </div>
+            <div class="result-card">
+                <div class="result-label">Severity Score</div>
+                <div class="result-value text-red-600">{{ severity }}/100 <span class="text-gray-600">({{ severity_level }})</span></div>
+            </div>
+        </div>
+    <div class="result-card bg-blue-50 border-blue-400 text-blue-900">
+    <div class="result-label">Advice</div>
+    <div class="result-value text-lg font-semibold">{{ advice_message }}</div>
+    </div>
+        <a href="{% url 'home' %}" class="back-button mt-6 inline-block">Back to Home</a>
+    </div>
+   
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const container = document.querySelector('.result-container');
+            container.style.opacity = '0';
+            setTimeout(() => {
+                container.style.opacity = '1';
+            }, 100);
+        });
+    </script>
+</body>
+</html>
