@@ -1,0 +1,471 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Heart Health Risk Awareness</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+    <style>
+        body {
+            background-image: url('{% static "images/heart2.jpg" %}'), url('https://images.unsplash.com/photo-1517502166878-35c6a8a7b6f8?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            /* Removed faded fallback color and adjusted blend mode */
+            background-blend-mode: normal; /* Changed to normal to reduce fading */
+            color: #333;
+        }
+        .content-container { background: rgba(255, 255, 255, 0.9); border-radius: 8px; padding: 20px; }
+        .section-hidden { opacity: 0; transform: translateY(50px); transition: opacity 0.5s, transform 0.5s; }
+        .section-visible { opacity: 1; transform: translateY(0); }
+        .chart-container { max-width: 100%; max-height: 400px; margin-top: 20px; opacity: 0; transition: opacity 0.5s; }
+        .chart-visible { opacity: 1; }
+        h1, h2 { color: #B91C1C; } /* Deep red for headings */
+        button { background-color: #1E3A8A; color: white; } /* Blue for buttons with white text */
+        button:hover { background-color: #1E40AF; }
+        footer { background: rgba(185, 28, 28, 0.7); } /* Adjusted opacity for better text visibility */
+        /* Hero section specific styling to ensure visibility */
+        header {
+            /* Removed dark overlay: background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)); */
+        }
+        header .content-container {
+            background: rgba(255, 255, 255, 0.85); /* Slightly opaque white background */
+            padding: 2rem;
+            border-radius: 8px;
+        }
+        header h1, header p, header button {
+            color: #1E293B; /* Dark gray for better contrast */
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3); /* Optional shadow for readability */
+        }
+        /* Specific styling for Assess Your Risk button */
+        #assess-risk-btn {
+            background-color: #10B981; /* Emerald green for distinction */
+            padding: 10px 20px;
+            font-size: 16px;
+        }
+        #assess-risk-btn:hover {
+            background-color: #059669; /* Darker emerald on hover */
+        }
+        /* Footer text visibility */
+        footer .content-container {
+            color: #FFFFFF; /* White text for contrast */
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5); /* Shadow for readability */
+        }
+    </style>
+</head>
+<body>
+    <!-- Preload Background Image -->
+    <img src="{% static 'images/heart.jpeg' %}" style="display: none;" onload="console.log('Local background image loaded');" onerror="console.log('Local background image failed, using fallback');">
+    <img src="https://images.unsplash.com/photo-1517502166878-35c6a8a7b6f8?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80" style="display: none;" onload="console.log('Fallback background image loaded');" onerror="console.error('Fallback background image failed');">
+
+    <!-- Hero Section -->
+    <header class="py-20 text-center">
+        <div class="content-container max-w-4xl mx-auto px-4">
+            <h1 class="text-4xl md:text-5xl font-bold mb-4">Protect Your Heart</h1>
+            <p class="text-lg mb-6">Heart disease is the leading cause of death globally, but it's also one of the most preventable. Maintaining good heart health is essential for a long and active life. Factors like high blood pressure, high cholesterol, smoking, obesity, and lack of exercise can significantly raise your risk. By understanding these risks and making small lifestyle changes, you can greatly improve your heart’s well-being. This tool helps you assess your risk and take control of your heart health today.</p>
+            <button id="assess-risk-btn" onclick="scrollToForm()" class="text-white font-semibold py-2 px-6 rounded-full">Assess Your Risk</button>
+        </div>
+    </header>
+
+    <!-- Content Sections -->
+    <main class="container mx-auto px-4 py-12">
+        <!-- Section 1: Introduction -->
+        <section id="section-1" class="mb-16 section-hidden content-container">
+            <h2 class="text-3xl font-bold text-center mb-6">What is Heart Disease?</h2>
+            <p class="text-lg mb-4">Heart disease is the leading cause of death worldwide, affecting millions annually. It includes conditions like coronary artery disease and heart failure. Understanding your risk factors is the first step to prevention.</p>
+            <div class="chart-container" id="chart-1" data-graph="age-risk">
+                <canvas id="risk-chart-1"></canvas>
+            </div>
+        </section>
+
+        <!-- Section 2: Risk Factors -->
+        <section id="section-2" class="mb-16 section-hidden content-container">
+            <h2 class="text-3xl font-bold text-center mb-6">Key Risk Factors</h2>
+            <p class="text-lg mb-4">Certain lifestyle choices and medical conditions significantly increase heart disease risk. Smoking, high cholesterol, and lack of physical activity are major contributors. Addressing these can lower your risk substantially.</p>
+            <div class="grid md:grid-cols-3 gap-6">
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-xl font-semibold mb-2">High Blood Pressure</h3>
+                    <p>Strains the heart, increasing risk.</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-xl font-semibold mb-2">Cholesterol</h3>
+                    <p>High levels clog arteries.</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-xl font-semibold mb-2">Lifestyle</h3>
+                    <p>Smoking and inactivity elevate risk.</p>
+                </div>
+            </div>
+            <div class="chart-container" id="chart-2" data-graph="lifestyle-risk">
+                <canvas id="risk-chart-2"></canvas>
+            </div>
+        </section>
+
+        <!-- Section 3: Prevention Tips (Exactly 5) -->
+        <section id="section-3" class="mb-16 section-hidden content-container">
+            <h2 class="text-3xl font-bold text-center mb-6">5 Ways to Protect Your Heart</h2>
+            <p class="text-lg mb-4">Adopting a heart-healthy lifestyle can significantly reduce your risk. Simple changes in diet, exercise, and habits make a big difference. Follow these evidence-based tips to stay healthy.</p>
+            <ul class="list-disc list-inside max-w-2xl mx-auto">
+                <li>Eat fruits, vegetables, and whole grains.</li>
+                <li>Exercise 150 minutes weekly.</li>
+                <li>Avoid smoking and limit alcohol.</li>
+                <li>Monitor blood pressure and cholesterol.</li>
+                <li>Manage stress with mindfulness.</li>
+            </ul>
+            <div class="chart-container" id="chart-3" data-graph="prevention-impact">
+                <canvas id="risk-chart-3"></canvas>
+            </div>
+        </section>
+    </main>
+
+    <!-- Risk Assessment Form -->
+    <section id="form-section" class="py-12">
+        <div class="content-container max-w-lg mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center mb-6">Check Your Heart Disease Risk</h2>
+            <form id="risk-form" class="space-y-4" action="{% url 'predict' %}" method="post">
+             {% csrf_token %}
+                <div>
+                    <label for="Age" class="block text-sm font-medium">Age (28–77)</label>
+                    <input type="number" id="Age" name="Age" min="28" max="77" required class="mt-1 w-full p-2 border rounded-md">
+                </div>
+                <div>
+                    <label for="Sex" class="block text-sm font-medium">Gender</label>
+                    <select id="Sex" name="Sex" required class="mt-1 w-full p-2 border rounded-md">
+                        <option value="" disabled selected>Select</option>
+                        <option value="1">Male</option>
+                        <option value="0">Female</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="ChestPainType" class="block text-sm font-medium">Chest Pain Type</label>
+                    <select id="ChestPainType" name="ChestPainType" required class="mt-1 w-full p-2 border rounded-md">
+                        <option value="" disabled selected>Select</option>
+                        <option value="0">ATA (Atypical Angina)</option>
+                        <option value="1">NAP (Non-Anginal Pain)</option>
+                        <option value="2">ASY (Asymptomatic)</option>
+                        <option value="3">TA (Typical Angina)</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="RestingBP" class="block text-sm font-medium">Resting Blood Pressure (80–200 mmHg)</label>
+                    <input type="number" id="RestingBP" name="RestingBP" min="80" max="200" required class="mt-1 w-full p-2 border rounded-md">
+                </div>
+                <div>
+                    <label for="Cholesterol" class="block text-sm font-medium">Cholesterol (100–603 mg/dl)</label>
+                    <input type="number" id="Cholesterol" name="Cholesterol" min="100" max="603" required class="mt-1 w-full p-2 border rounded-md">
+                </div>
+                <div>
+                    <label for="FastingBS" class="block text-sm font-medium">Fasting Blood Sugar (>120 mg/dl)</label>
+                    <select id="FastingBS" name="FastingBS" required class="mt-1 w-full p-2 border rounded-md">
+                        <option value="" disabled selected>Select</option>
+                        <option value="0">No</option>
+                        <option value="1">Yes</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="RestingECG" class="block text-sm font-medium">Resting ECG</label>
+                    <select id="RestingECG" name="RestingECG" required class="mt-1 w-full p-2 border rounded-md">
+                        <option value="" disabled selected>Select</option>
+                        <option value="1">Normal</option>
+                        <option value="2">ST (ST-T abnormality)</option>
+                        <option value="0">LVH (Left Ventricular Hypertrophy)</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="MaxHR" class="block text-sm font-medium">Max Heart Rate (60–202)</label>
+                    <input type="number" id="MaxHR" name="MaxHR" min="60" max="202" required class="mt-1 w-full p-2 border rounded-md">
+                </div>
+                <div>
+                    <label for="ExerciseAngina" class="block text-sm font-medium">Exercise Angina</label>
+                    <select id="ExerciseAngina" name="ExerciseAngina" required class="mt-1 w-full p-2 border rounded-md">
+                        <option value="" disabled selected>Select</option>
+                        <option value="0">No</option>
+                        <option value="1">Yes</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="Oldpeak" class="block text-sm font-medium">Oldpeak (ST Depression, -2.6 to 6.2)</label>
+                    <input type="number" id="Oldpeak" name="Oldpeak" step="0.1" min="-2.6" max="6.2" required class="mt-1 w-full p-2 border rounded-md">
+                </div>
+                <div>
+                    <label for="ST_Slope" class="block text-sm font-medium">ST Slope</label>
+                    <select id="ST_Slope" name="ST_Slope" required class="mt-1 w-full p-2 border rounded-md">
+                        <option value="" disabled selected>Select</option>
+                        <option value="2">Up</option>
+                        <option value="1">Flat</option>
+                        <option value="0">Down</option>
+                    </select>
+                </div>
+                <button type="submit" class="w-full text-white p-2 rounded">Calculate Risk</button>
+            </form>
+            <div id="result" class="mt-6 hidden bg-green-100 p-4 rounded-lg"></div>
+            <div id="error" class="mt-6 hidden bg-red-100 p-4 rounded-lg"></div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-8 text-white">
+        <div class="content-container max-w-4xl mx-auto text-center px-4">
+            <p>© 2025 Heart Health Awareness. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Finite Scroll and Section Animation
+        const sections = document.querySelectorAll('.section-hidden');
+        let sectionCount = 3;
+        const maxSections = 5; // Limit to 5 total sections
+        const charts = {};
+
+        // Observer for section text animation
+        const sectionObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    console.log(`Section visible: ${entry.target.id}`);
+                    entry.target.classList.add('section-visible');
+                    sectionObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.3 });
+
+        sections.forEach(section => sectionObserver.observe(section));
+
+        // Observer for graph visibility
+        const chartObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    console.log(`Chart visible: ${entry.target.id}, graph: ${entry.target.dataset.graph}`);
+                    const graphType = entry.target.dataset.graph;
+                    const sectionId = entry.target.id.replace('chart', 'section');
+                    entry.target.classList.add('chart-visible');
+                    setTimeout(() => renderGraph(graphType, sectionId), 100);
+                    chartObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.3, rootMargin: '100px' });
+
+        // Observe initial chart containers
+        document.querySelectorAll('.chart-container').forEach(chart => {
+            console.log(`Observing initial chart: ${chart.id}`);
+            chartObserver.observe(chart);
+        });
+
+        // Finite scroll for dynamic sections
+        window.addEventListener('scroll', () => {
+            if (sectionCount < maxSections && window.innerHeight + window.scrollY >= document.body.offsetHeight - 200) {
+                sectionCount++;
+                console.log(`Adding section ${sectionCount}`);
+                const newSection = document.createElement('section');
+                newSection.id = `section-${sectionCount}`;
+                newSection.className = 'mb-16 section-hidden content-container';
+                newSection.innerHTML = `
+                    <h2 class="text-3xl font-bold text-center mb-6">Heart Health Fact #${sectionCount - 2}</h2>
+                    <p class="text-lg mb-4">${
+                        sectionCount === 4 
+                            ? 'Over the past two decades, heart disease mortality has decreased due to advancements in medical care and increased awareness. Early interventions and lifestyle changes have saved countless lives.'
+                            : 'Heart disease affects both men and women, but prevalence varies by gender. Understanding these differences helps tailor prevention strategies.'
+                    }</p>
+                    <div class="chart-container" id="chart-${sectionCount}" data-graph="${sectionCount === 4 ? 'mortality-trend' : 'gender-distribution'}">
+                        <canvas id="risk-chart-${sectionCount}"></canvas>
+                    </div>
+                `;
+                document.querySelector('main').appendChild(newSection);
+                sectionObserver.observe(newSection);
+                const newChart = newSection.querySelector('.chart-container');
+                console.log(`Observing new chart: ${newChart.id}`);
+                chartObserver.observe(newChart);
+                // Fallback: Check if chart is in viewport after adding
+                setTimeout(() => {
+                    const rect = newChart.getBoundingClientRect();
+                    const isVisible = (rect.top >= 0 && rect.top <= window.innerHeight * 0.7);
+                    if (isVisible && !charts[newSection.id]) {
+                        console.log(`Fallback rendering for ${newChart.id}`);
+                        renderGraph(newChart.dataset.graph, newSection.id);
+                        newChart.classList.add('chart-visible');
+                    }
+                }, 500);
+                // Retry mechanism
+                const retryInterval = setInterval(() => {
+                    const rect = newChart.getBoundingClientRect();
+                    const isVisible = (rect.top >= 0 && rect.top <= window.innerHeight * 0.7);
+                    if (isVisible && !charts[newSection.id]) {
+                        console.log(`Retry rendering for ${newChart.id}`);
+                        renderGraph(newChart.dataset.graph, newSection.id);
+                        newChart.classList.add('chart-visible');
+                        clearInterval(retryInterval);
+                    }
+                }, 300);
+                setTimeout(() => clearInterval(retryInterval), 3000);
+            }
+        });
+
+        // Scroll to Form
+        function scrollToForm() {
+            document.getElementById('form-section').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Render Graph
+        function renderGraph(type, sectionId) {
+            const canvas = document.getElementById(`risk-chart-${sectionId.split('-')[1]}`);
+            if (!canvas) {
+                console.error(`Canvas not found for ${sectionId}`);
+                return;
+            }
+            const ctx = canvas.getContext('2d');
+            if (charts[sectionId]) charts[sectionId].destroy();
+
+            console.log(`Rendering graph for ${sectionId}: ${type}`);
+            let config;
+            if (type === 'age-risk') {
+                config = {
+                    type: 'bar',
+                    data: {
+                        labels: ['20-39', '40-59', '60-79', '80+'],
+                        datasets: [{
+                            label: 'Risk',
+                            data: [5, 20, 40, 60],
+                            backgroundColor: ['#B91C1C', '#DC2626', '#EF4444', '#F87171'],
+                            borderColor: ['#7F1D1D', '#B91C1C', '#DC2626', '#EF4444'],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        animation: { duration: 1500, easing: 'easeOutQuad' },
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { title: { display: true, text: 'Heart Disease Risk by Age Group (%)' } },
+                        scales: { y: { beginAtZero: true, title: { display: true, text: 'Percentage (%)' } } }
+                    }
+                };
+            } else if (type === 'lifestyle-risk') {
+                config = {
+                    type: 'bar',
+                    data: {
+                        labels: ['Smoking', 'Obesity', 'Inactivity', 'Poor Diet'],
+                        datasets: [{
+                            label: 'Risk',
+                            data: [30, 25, 20, 15],
+                            backgroundColor: ['#B91C1C', '#DC2626', '#EF4444', '#F87171'],
+                            borderColor: ['#7F1D1D', '#B91C1C', '#DC2626', '#EF4444'],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        animation: { duration: 1500, easing: 'easeOutQuad' },
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { title: { display: true, text: 'Risk Contribution by Lifestyle Factors (%)' } },
+                        scales: { y: { beginAtZero: true, title: { display: true, text: 'Percentage (%)' } } }
+                    }
+                };
+            } else if (type === 'prevention-impact') {
+                config = {
+                    type: 'bar',
+                    data: {
+                        labels: ['Diet', 'Exercise', 'No Smoking', 'Check-ups'],
+                        datasets: [{
+                            label: 'Risk Reduction',
+                            data: [30, 25, 20, 15],
+                            backgroundColor: ['#B91C1C', '#DC2626', '#EF4444', '#F87171'],
+                            borderColor: ['#7F1D1D', '#B91C1C', '#DC2626', '#EF4444'],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        animation: { duration: 1500, easing: 'easeOutQuad' },
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { title: { display: true, text: 'Risk Reduction by Prevention Measures (%)' } },
+                        scales: { y: { beginAtZero: true, title: { display: true, text: 'Percentage (%)' } } }
+                    }
+                };
+            } else if (type === 'mortality-trend') {
+                config = {
+                    type: 'line',
+                    data: {
+                        labels: ['2000', '2005', '2010', '2015', '2020'],
+                        datasets: [{
+                            label: 'Mortality Rate',
+                            data: [30, 28, 25, 22, 20],
+                            fill: true,
+                            backgroundColor: 'rgba(185, 28, 28, 0.2)',
+                            borderColor: '#B91C1C',
+                            tension: 0.4
+                        }]
+                    },
+                    options: {
+                        animation: { duration: 1500, easing: 'easeOutQuad' },
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { title: { display: true, text: 'Heart Disease Mortality Trend (%)' } },
+                        scales: { y: { beginAtZero: true, title: { display: true, text: 'Percentage (%)' } } }
+                    }
+                };
+            } else {
+                config = {
+                    type: 'pie',
+                    data: {
+                        labels: ['Men', 'Women'],
+                        datasets: [{
+                            label: 'Prevalence',
+                            data: [55, 45],
+                            backgroundColor: ['#B91C1C', '#FECACA'],
+                            borderColor: ['#7F1D1D', '#F87171'],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        animation: { duration: 1500, easing: 'easeOutQuad' },
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { title: { display: true, text: 'Heart Disease Prevalence by Gender (%)' } }
+                    }
+                };
+            }
+
+            charts[sectionId] = new Chart(ctx, config);
+        }
+
+        // Form Submission
+        /*//document.getElementById('risk-form').addEventListener('submit', async (e) => {
+          //  e.preventDefault();
+            //const formData = new FormData(e.target);
+            //const data = Object.fromEntries(formData);
+
+            //try {
+              //  const response = await fetch('http://localhost:8000/api/predict/', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json',
+                     'X-CSRFToken': getCookie('csrftoken') },
+                      body: JSON.stringify(data)
+                });
+                const result = await response.json();
+
+                const resultDiv = document.getElementById('result');
+                const errorDiv = document.getElementById('error');
+
+                if (response.ok) {
+                    errorDiv.classList.add('hidden');
+                    resultDiv.classList.remove('hidden');
+                    resultDiv.innerHTML = `
+                        <p><strong>Prediction:</strong> ${result.prediction === 0 ? 'No Heart Disease' : 'Heart Disease'}</p>
+                        <p><strong>Probability (No Disease):</strong> ${(result.probability[0] * 100).toFixed(2)}%</p>
+                        <p><strong>Probability (Disease):</strong> ${(result.probability[1] * 100).toFixed(2)}%</p>
+                        <p><strong>Severity Score:</strong> ${result.severity}/100 (${result.severity < 10 ? 'Low' : result.severity <= 50 ? 'Moderate' : 'High'})</p>
+                    `;
+                } else {
+                    resultDiv.classList.add('hidden');
+                    errorDiv.classList.remove('hidden');
+                    errorDiv.innerHTML = `<p><strong>Error:</strong> ${result.error}</p>`;
+                }
+            } catch (err) {
+                document.getElementById('result').classList.add('hidden');
+                document.getElementById('error').classList.remove('hidden');
+                document.getElementById('error').innerHTML = `<p><strong>Error:</strong> Network error occurred</p>`;
+            }
+        });*/
+    </script>
+</body>
+</html>
