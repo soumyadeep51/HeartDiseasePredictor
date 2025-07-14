@@ -1,12 +1,18 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
+from django.contrib.auth import authenticate, login
 from django.http import JsonResponse
+from .models import HeartPrediction,Profile
+from .forms import CustomUserRegisterForm
+from django.contrib.auth.decorators import login_required
 import joblib
 import numpy as np
 #from .models import HeartDiseaseModel  # Assuming model is in models.py
 
 # Existing home view (unchanged)
+@login_required(login_url='/login/')
 def home(request):
+    print("User:", request.user)
     return render(request, 'home3.html')
 
 # Modified predict view
@@ -67,6 +73,24 @@ def predict(request):
             prediction = model.predict(input_data)[0]
             probability = model.predict_proba(input_data)[0]
             severity = min(max(int(probability[1] * 100), 0), 100)  # Scale to 0-100
+            #Store in database
+            HeartPrediction.objects.create(
+                 age=int(Age),
+                 sex=Sex,
+                 chest_pain_type=ChestPainType,
+                 resting_bp=RestingBP,
+                 cholesterol=Cholesterol,
+                 fasting_bs=FastingBS,
+                 resting_ecg=RestingECG,
+                 max_hr=MaxHR,
+                 exercise_angina=ExerciseAngina,
+                 oldpeak=Oldpeak,
+                 st_slope=ST_Slope,
+                 prediction=int(prediction),
+                 probability_0=float(probability[0]),
+                 probability_1=float(probability[1]),
+                 severity=int(severity)
+                 )
 
             # Store in session
             """request.session['prediction'] = prediction
@@ -124,4 +148,41 @@ def result(request):
     }
 
     return render(request, 'result.html', context)
+def register(request):
+    if request.method == 'POST':
+        form = CustomUserRegisterForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            
+
+            # ✅ Explicitly create the profile
+            Profile.objects.create(
+                user=user,
+                age=form.cleaned_data['age'],
+                gender=form.cleaned_data['gender']
+            )
+
+            messages.success(request, 'Registration successful!')
+            return redirect('home')
+        else:
+            messages.error(request, 'Please fix the errors below.')
+    else:
+        form = CustomUserRegisterForm()
+    
+    return render(request, 'register.html', {'form': form})
+def login_view(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            login(request, user)
+            messages.success(request, f"Welcome back, {user.username}!")
+            return redirect('home')  # or your main dashboard
+        else:
+            messages.error(request, 'Invalid username or password.')
+
+    return render(request, 'login.html')
+
 

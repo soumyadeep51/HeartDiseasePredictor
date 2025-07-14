@@ -5,6 +5,10 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler, LabelEncoder
 import joblib
 import os
+from django.db import models
+from django.contrib.auth.models import User
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 def load_and_prepare_data():
     # Load the provided heart.csv dataset
@@ -69,3 +73,54 @@ def load_model_and_scaler():
         raise FileNotFoundError("Model or scaler file not found")
 if __name__ == '__main__':
     train_and_save_model()
+class HeartPrediction(models.Model):
+    # Input fields
+    age = models.IntegerField()
+    sex = models.IntegerField()
+    chest_pain_type = models.IntegerField()
+    resting_bp = models.IntegerField()
+    cholesterol = models.IntegerField()
+    fasting_bs = models.IntegerField()
+    resting_ecg = models.IntegerField()
+    max_hr = models.IntegerField()
+    exercise_angina = models.IntegerField()
+    oldpeak = models.FloatField()
+    st_slope = models.IntegerField()
+
+    # Output fields
+    prediction = models.IntegerField()
+    probability_0 = models.FloatField()
+    probability_1 = models.FloatField()
+    severity = models.IntegerField()
+
+    # Optional
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Prediction ({self.prediction}) at {self.created_at}"
+
+
+
+class Profile(models.Model):
+    GENDER_CHOICES = (
+        ('M', 'Male'),
+        ('F', 'Female'),
+        ('O', 'Other'),
+    )
+
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    age = models.IntegerField()
+    gender = models.CharField(max_length=1, choices=GENDER_CHOICES)
+
+    def __str__(self):
+        return f"{self.user.username}'s Profile"
+
+# Signal to create Profile automatically after a User is created
+
+
+# Signal to save Profile when User is saved
+"""@receiver(post_save, sender=User)
+def save_user_profile(sender, instance, **kwargs):
+    instance.profile.save()"""
+
+

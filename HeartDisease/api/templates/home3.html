@@ -4,74 +4,195 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Heart Health Risk Awareness</title>
+    <title>HeartWise - Heart Health Risk Awareness</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
     <style>
         body {
-            background-image: linear-gradient(to bottom, rgba(255, 225, 225, 0.9), rgba(255, 200, 200, 0.2)), url('https://images.unsplash.com/photo-1517502166878-35c6a8a7b6f8?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');
-            background-size: cover;
-            background-position: center;
+            background: linear-gradient(to bottom, #1a1a1a 0%, #2a2a2a 50%, #1a1a1a 100%);
             background-attachment: fixed;
-            background-blend-mode: normal;
-            color: #333;
+            color: #E5E7EB;
             overflow: hidden; /* Hide content below hero on load */
+            position: relative;
+            font-family: Arial, sans-serif;
+            min-height: 100vh;
         }
-        .content-container { background: rgba(255, 255, 255, 0.9); border-radius: 8px; padding: 20px; }
-        .section-hidden { opacity: 0; transform: translateY(50px); transition: opacity 0.5s, transform 0.5s; }
-        .section-visible { opacity: 1; transform: translateY(0); }
-        .chart-container { max-width: 100%; margin-top: 20px; opacity: 0; transition: opacity 0.5s; }
-        .chart-container.bar, .chart-container.line { max-height: 500px; }
-        .chart-container.pie { max-height: 400px; }
-        .chart-visible { opacity: 1; }
-        h1, h2 { color: #B91C1C; }
-        .hero-heading { color: #1E3A8A; } /* Blue color for Protect Your Heart */
-        button { background-color: #1E3A8A; color: white; }
-        button:hover { background-color: #1E40AF; }
-        .calculate-risk-btn { background-color: #10B981; } /* Green for Calculate Risk button */
-        .calculate-risk-btn:hover { background-color: #059669; }
-        footer { background: rgba(185, 28, 28, 0.7); }
+        .content-container { 
+            background: rgba(31, 41, 55, 0.95); 
+            border-radius: 8px; 
+            padding: 20px; 
+        }
+        .section-hidden { 
+            opacity: 0; 
+            transform: translateY(50px); 
+            transition: opacity 0.5s, transform 0.5s; 
+        }
+        .section-visible { 
+            opacity: 1; 
+            transform: translateY(0); 
+        }
+        .chart-container { 
+            max-width: 100%; 
+            margin-top: 20px; 
+            opacity: 0; 
+            transition: opacity 0.5s; 
+        }
+        .chart-container.bar, .chart-container.line { 
+            max-height: 500px; 
+        }
+        .chart-container.pie { 
+            max-height: 400px; 
+        }
+        .chart-visible { 
+            opacity: 1; 
+        }
+        h1, h2 { 
+            color: #EF4444; 
+        }
+        .hero-heading { 
+            color: #60A5FA; 
+        }
+        button { 
+            background-color: #60A5FA; 
+            color: white; 
+        }
+        button:hover { 
+            background-color: #3B82F6; 
+        }
+        .calculate-risk-btn { 
+            background-color: #10B981; 
+        }
+        .calculate-risk-btn:hover { 
+            background-color: #059669; 
+        }
+        footer { 
+            background: rgba(185, 28, 28, 0.7); 
+        }
         header {
             background: none;
-            min-height: 100vh; /* Full viewport height */
+            min-height: calc(100vh - 64px);
             display: flex;
             align-items: center;
             justify-content: center;
+            padding-top: 64px;
         }
         header .content-container {
-            background: rgba(255, 255, 255, 0.85);
+            background: rgba(31, 41, 55, 0.95);
             padding: 2rem;
             border-radius: 8px;
+            width: 100%; /* Full width for hero section */
+            max-width: none; /* Remove max-width constraint */
         }
         header h1, header p, header button {
-            color: #1E293B;
+            color: #D1D5DB; /* Light gray for hero text */
             text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+        }
+        header p {
+            text-align: justify; /* Justify hero section text */
         }
         #assess-risk-btn {
             background-color: #10B981;
             padding: 10px 20px;
             font-size: 16px;
+            transition: box-shadow 0.3s ease;
         }
         #assess-risk-btn:hover {
             background-color: #059669;
+            box-shadow: 0 0 10px #60A5FA, 0 0 20px #EF4444, 0 0 30px #60A5FA; /* Blue-red neon glow */
         }
         footer .content-container {
             color: #FFFFFF;
             text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
         }
+        nav {
+            background: rgba(185, 28, 28, 0.9);
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 50;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        nav .content-container {
+            background: none;
+            padding: 0;
+        }
+        nav a {
+            color: white;
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            transition: box-shadow 0.3s ease, background-color 0.3s;
+        }
+        nav a:hover {
+            background-color: rgba(127, 29, 29, 0.8);
+            box-shadow: 0 0 10px #60A5FA, 0 0 20px #EF4444, 0 0 30px #60A5FA; /* Blue-red neon glow */
+        }
+        #particle-canvas {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 200px; /* Narrower for subtlety */
+            height: 100%;
+            z-index: -1;
+            opacity: 0.5;
+        }
+        input, select {
+            background-color: #374151;
+            color: #E5E7EB;
+            border: 1px solid #4B5563;
+        }
+        input:focus, select:focus {
+            outline: none;
+            border-color: #EF4444;
+        }
+        label {
+            color: #D1D5DB;
+        }
+        #result {
+            background-color: rgba(34, 197, 94, 0.2);
+            color: #E5E7EB;
+        }
+        #error {
+            background-color: rgba(239, 68, 68, 0.2);
+            color: #E5E7EB;
+        }
+        .grid div {
+            background-color: #374151;
+        }
     </style>
 </head>
 <body>
     <!-- Preload Background Image -->
-    <img src="{% static 'images/heart.jpeg' %}" style="display: none;" onload="console.log('Local background image loaded');" onerror="console.log('Local background image failed, using fallback');">
-    <img src="https://images.unsplash.com/photo-1517502166878-35c6a8a7b6f8?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80" style="display: none;" onload="console.log('Fallback background image loaded');" onerror="console.error('Fallback background image failed');">
+    <img src="{% static 'images/heart.jpeg' %}" style="display: none;" onload="console.log('Local background image loaded');" onerror="console.log('Local background image failed');">
+
+    <!-- Particle Animation Canvas -->
+    <canvas id="particle-canvas"></canvas>
+
+    <!-- Navigation Bar -->
+    <nav class="py-4">
+        <div class="content-container max-w-6xl mx-auto px-4 flex justify-between items-center">
+            <a href="#" class="text-xl font-bold text-white">HeartWise</a>
+            <div class="flex space-x-4">
+                <a href="#header" onclick="scrollToSection('header')">Home</a>
+                <a href="#section-2" onclick="scrollToSection('section-2')">Risk Factors</a>
+                <a href="#section-3" onclick="scrollToSection('section-3')">Prevention</a>
+                <a href="#form-section" onclick="scrollToSection('form-section')">Assessment</a>
+            </div>
+        </div>
+    </nav>
 
     <!-- Hero Section -->
-    <header class="py-20 text-center">
-        <div class="content-container max-w-4xl mx-auto px-4">
-            <h1 class="hero-heading text-4xl md:text-5xl font-bold mb-4">Protect Your Heart</h1>
-            <p class="text-lg mb-6">Heart disease is the leading cause of death globally, but it's also one of the most preventable. Maintaining good heart health is essential for a long and active life. Factors like high blood pressure, high cholesterol, smoking, obesity, and lack of exercise can significantly raise your risk. By understanding these risks and making small lifestyle changes, you can greatly improve your heart’s well-being. This tool helps you assess your risk and take control of your heart health today.</p>
-            <p class="text-lg mb-6">Heart disease is the leading cause of death globally, but it's also one of the most preventable. Maintaining good heart health is essential for a long and active life. Factors like high blood pressure, high cholesterol, smoking, obesity, and lack of exercise can significantly raise your risk. By understanding these risks and making small lifestyle changes, you can greatly improve your heart’s well-being. This tool helps you assess your risk and take control of your heart health today.</p>
+    <header id="header" class="py-20 text-center">
+        <div class="content-container px-4">
+            <h1 class="hero-heading text-4xl md:text-5xl font-bold mb-4">Protect Your Heart with HeartWise</h1>
+            <p class="text-lg mb-6">Heart disease continues to be the leading cause of death across the globe, affecting millions of lives each year. Despite its widespread impact, heart disease is largely preventable. With the right knowledge, timely action, and consistent lifestyle choices, you can take powerful steps toward protecting your heart and living a healthier, longer life.
+
+Our modern lifestyles often contribute to the silent development of heart-related conditions. Risk factors such as high blood pressure, elevated cholesterol levels, smoking, excessive alcohol consumption, obesity, poor diet, and physical inactivity can silently and steadily increase the chances of developing cardiovascular diseases. Often, these factors go unnoticed until it's too late — which is why early awareness and proactive care are essential.
+
+Understanding your personal risk is the first step toward prevention. When you recognize the impact of these contributing factors, you are empowered to make small but meaningful changes — such as eating a balanced diet, engaging in regular physical activity, managing stress, and attending regular health checkups. These choices, over time, can dramatically reduce your risk and boost your overall well-being.
+
+That’s where HeartWise comes in. Our platform is designed to help you assess your individual risk levels, understand how lifestyle and genetics may be affecting your heart, and guide you toward evidence-based actions you can take immediately. Whether you’re already managing a heart condition or simply aiming to prevent one, HeartWise provides you with the tools and knowledge to take control of your heart health — today and every day.
+
+Let HeartWise be your companion in this journey to a stronger, healthier heart.</p>
             <button id="assess-risk-btn" onclick="scrollToForm()" class="text-white font-semibold py-2 px-6 rounded-full">Assess Your Risk</button>
         </div>
     </header>
@@ -92,15 +213,15 @@
             <h2 class="text-3xl font-bold text-center mb-6">Key Risk Factors</h2>
             <p class="text-lg mb-4">Certain lifestyle choices and medical conditions significantly increase heart disease risk. Smoking, high cholesterol, and lack of physical activity are major contributors. Addressing these can lower your risk substantially.</p>
             <div class="grid md:grid-cols-3 gap-6">
-                <div class="bg-white p-6 rounded-lg shadow-md">
+                <div class="p-6 rounded-lg shadow-md">
                     <h3 class="text-xl font-semibold mb-2">High Blood Pressure</h3>
                     <p>Strains the heart, increasing risk.</p>
                 </div>
-                <div class="bg-white p-6 rounded-lg shadow-md">
+                <div class="p-6 rounded-lg shadow-md">
                     <h3 class="text-xl font-semibold mb-2">Cholesterol</h3>
                     <p>High levels clog arteries.</p>
                 </div>
-                <div class="bg-white p-6 rounded-lg shadow-md">
+                <div class="p-6 rounded-lg shadow-md">
                     <h3 class="text-xl font-semibold mb-2">Lifestyle</h3>
                     <p>Smoking and inactivity elevate risk.</p>
                 </div>
@@ -207,20 +328,20 @@
                 </div>
                 <button type="submit" class="calculate-risk-btn w-full text-white p-2 rounded">Calculate Risk</button>
             </form>
-            <div id="result" class="mt-6 hidden bg-green-100 p-4 rounded-lg"></div>
-            <div id="error" class="mt-6 hidden bg-red-100 p-4 rounded-lg"></div>
+            <div id="result" class="mt-6 hidden p-4 rounded-lg"></div>
+            <div id="error" class="mt-6 hidden p-4 rounded-lg"></div>
         </div>
     </section>
 
     <!-- Footer -->
     <footer class="py-8 text-white">
         <div class="content-container max-w-4xl mx-auto text-center px-4">
-            <p>© 2025 Heart Health Awareness. All rights reserved.</p>
+            <p>© 2025 HeartWise. All rights reserved.</p>
         </div>
     </footer>
 
     <script>
-        // Enable scrolling on interaction (scroll, wheel, touch, or button click)
+        // Enable scrolling on interaction
         function enableScrolling() {
             if (document.body.style.overflow !== 'auto') {
                 document.body.style.overflow = 'auto';
@@ -228,20 +349,24 @@
             }
         }
 
-        // Add multiple event listeners for reliable scroll detection
         ['scroll', 'wheel', 'touchstart'].forEach(event => {
             window.addEventListener(event, () => {
                 if (window.scrollY >= 0) {
                     enableScrolling();
                 }
-            }, { once: true }); // Run once to avoid redundant calls
+            }, { once: true });
         });
+
+        // Scroll to Section
+        function scrollToSection(sectionId) {
+            enableScrolling();
+            document.getElementById(sectionId).scrollIntoView({ behavior: 'smooth' });
+            console.log(`Scrolled to ${sectionId}`);
+        }
 
         // Scroll to Form
         function scrollToForm() {
-            enableScrolling(); // Ensure scrolling is enabled
-            document.getElementById('form-section').scrollIntoView({ behavior: 'smooth' });
-            console.log('Scrolled to form section');
+            scrollToSection('form-section');
         }
 
         // Finite Scroll and Section Animation
@@ -250,7 +375,6 @@
         const maxSections = 5;
         const charts = {};
 
-        // Observer for section text animation
         const sectionObserver = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
@@ -263,7 +387,6 @@
 
         sections.forEach(section => sectionObserver.observe(section));
 
-        // Observer for graph visibility
         const chartObserver = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
@@ -277,13 +400,11 @@
             });
         }, { threshold: 0.3, rootMargin: '100px' });
 
-        // Observe initial chart containers
         document.querySelectorAll('.chart-container').forEach(chart => {
             console.log(`Observing initial chart: ${chart.id}`);
             chartObserver.observe(chart);
         });
 
-        // Finite scroll for dynamic sections
         window.addEventListener('scroll', () => {
             if (sectionCount < maxSections && window.innerHeight + window.scrollY >= document.body.offsetHeight - 200) {
                 sectionCount++;
@@ -309,7 +430,6 @@
                 const newChart = newSection.querySelector('.chart-container');
                 console.log(`Observing new chart: ${newChart.id}`);
                 chartObserver.observe(newChart);
-                // Fallback: Check if chart is in viewport after adding
                 setTimeout(() => {
                     const rect = newChart.getBoundingClientRect();
                     const isVisible = (rect.top >= 0 && rect.top <= window.innerHeight * 0.7);
@@ -319,7 +439,6 @@
                         newChart.classList.add('chart-visible');
                     }
                 }, 500);
-                // Retry mechanism
                 const retryInterval = setInterval(() => {
                     const rect = newChart.getBoundingClientRect();
                     const isVisible = (rect.top >= 0 && rect.top <= window.innerHeight * 0.7);
@@ -354,8 +473,8 @@
                         datasets: [{
                             label: 'Risk',
                             data: [5, 20, 40, 60],
-                            backgroundColor: ['#B91C1C', '#DC2626', '#EF4444', '#F87171'],
-                            borderColor: ['#7F1D1D', '#B91C1C', '#DC2626', '#EF4444'],
+                            backgroundColor: ['#EF4444', '#EF4444', '#EF4444', '#EF4444'], /* Consistent red */
+                            borderColor: ['#B91C1C', '#B91C1C', '#B91C1C', '#B91C1C'],
                             borderWidth: 1
                         }]
                     },
@@ -363,7 +482,7 @@
                         animation: { duration: 1500, easing: 'easeOutQuad' },
                         responsive: true,
                         maintainAspectRatio: false,
-                        plugins: { title: { display: true, text: 'Heart Disease Risk by Age Group (%)' } }
+                        plugins: { title: { display: true, text: 'Heart Disease Risk by Age Group (%)', color: '#E5E7EB' } }
                     }
                 };
             } else if (type === 'lifestyle-risk') {
@@ -374,8 +493,8 @@
                         datasets: [{
                             label: 'Risk',
                             data: [30, 25, 20, 15],
-                            backgroundColor: ['#B91C1C', '#DC2626', '#EF4444', '#F87171'],
-                            borderColor: ['#7F1D1D', '#B91C1C', '#DC2626', '#EF4444'],
+                            backgroundColor: ['#EF4444', '#EF4444', '#EF4444', '#EF4444'], /* Consistent red */
+                            borderColor: ['#B91C1C', '#B91C1C', '#B91C1C', '#B91C1C'],
                             borderWidth: 1
                         }]
                     },
@@ -383,8 +502,15 @@
                         animation: { duration: 1500, easing: 'easeOutQuad' },
                         responsive: true,
                         maintainAspectRatio: false,
-                        plugins: { title: { display: true, text: 'Risk Contribution by Lifestyle Factors (%)' } },
-                        scales: { y: { beginAtZero: true, title: { display: true, text: 'Percentage (%)' } } }
+                        plugins: { title: { display: true, text: 'Risk Contribution by Lifestyle Factors (%)', color: '#E5E7EB' } },
+                        scales: { 
+                            y: { 
+                                beginAtZero: true, 
+                                title: { display: true, text: 'Percentage (%)', color: '#E5E7EB' },
+                                ticks: { color: '#D1D5DB' }
+                            },
+                            x: { ticks: { color: '#D1D5DB' } }
+                        }
                     }
                 };
             } else if (type === 'prevention-impact') {
@@ -395,8 +521,8 @@
                         datasets: [{
                             label: 'Risk Reduction',
                             data: [30, 25, 20, 15],
-                            backgroundColor: ['#B91C1C', '#DC2626', '#EF4444', '#F87171'],
-                            borderColor: ['#7F1D1D', '#B91C1C', '#DC2626', '#EF4444'],
+                            backgroundColor: ['#EF4444', '#EF4444', '#EF4444', '#EF4444'], /* Consistent red */
+                            borderColor: ['#B91C1C', '#B91C1C', '#B91C1C', '#B91C1C'],
                             borderWidth: 1
                         }]
                     },
@@ -404,8 +530,15 @@
                         animation: { duration: 1500, easing: 'easeOutQuad' },
                         responsive: true,
                         maintainAspectRatio: false,
-                        plugins: { title: { display: true, text: 'Risk Reduction by Prevention Measures (%)' } },
-                        scales: { y: { beginAtZero: true, title: { display: true, text: 'Percentage (%)' } } }
+                        plugins: { title: { display: true, text: 'Risk Reduction by Prevention Measures (%)', color: '#E5E7EB' } },
+                        scales: { 
+                            y: { 
+                                beginAtZero: true, 
+                                title: { display: true, text: 'Percentage (%)', color: '#E5E7EB' },
+                                ticks: { color: '#D1D5DB' }
+                            },
+                            x: { ticks: { color: '#D1D5DB' } }
+                        }
                     }
                 };
             } else if (type === 'mortality-trend') {
@@ -417,8 +550,8 @@
                             label: 'Mortality Rate',
                             data: [30, 28, 25, 22, 20],
                             fill: true,
-                            backgroundColor: 'rgba(185, 28, 28, 0.2)',
-                            borderColor: '#B91C1C',
+                            backgroundColor: 'rgba(239, 68, 68, 0.2)',
+                            borderColor: '#EF4444',
                             tension: 0.4
                         }]
                     },
@@ -426,8 +559,15 @@
                         animation: { duration: 1500, easing: 'easeOutQuad' },
                         responsive: true,
                         maintainAspectRatio: false,
-                        plugins: { title: { display: true, text: 'Heart Disease Mortality Trend (%)' } },
-                        scales: { y: { beginAtZero: true, title: { display: true, text: 'Percentage (%)' } } }
+                        plugins: { title: { display: true, text: 'Heart Disease Mortality Trend (%)', color: '#E5E7EB' } },
+                        scales: { 
+                            y: { 
+                                beginAtZero: true, 
+                                title: { display: true, text: 'Percentage (%)', color: '#E5E7EB' },
+                                ticks: { color: '#D1D5DB' }
+                            },
+                            x: { ticks: { color: '#D1D5DB' } }
+                        }
                     }
                 };
             } else {
@@ -438,8 +578,8 @@
                         datasets: [{
                             label: 'Prevalence',
                             data: [55, 45],
-                            backgroundColor: ['#B91C1C', '#FECACA'],
-                            borderColor: ['#7F1D1D', '#F87171'],
+                            backgroundColor: ['#EF4444', '#EF4444'], /* Consistent red */
+                            borderColor: ['#B91C1C', '#B91C1C'],
                             borderWidth: 1
                         }]
                     },
@@ -447,13 +587,92 @@
                         animation: { duration: 1500, easing: 'easeOutQuad' },
                         responsive: true,
                         maintainAspectRatio: false,
-                        plugins: { title: { display: true, text: 'Heart Disease Prevalence by Gender (%)' } }
+                        plugins: { title: { display: true, text: 'Heart Disease Prevalence by Gender (%)', color: '#E5E7EB' } }
                     }
                 };
             }
 
             charts[sectionId] = new Chart(ctx, config);
         }
+
+        // Particle Animation with RBC Shapes
+        const particleCanvas = document.getElementById('particle-canvas');
+        const particleCtx = particleCanvas.getContext('2d');
+        const particles = [];
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * particleCanvas.width;
+                this.y = Math.random() * particleCanvas.height;
+                this.size = Math.random() * 5 + 3;
+                this.speedY = Math.random() * -1.5 - 0.5;
+                this.opacity = Math.random() * 0.3 + 0.2;
+            }
+
+            update() {
+                this.y += this.speedY;
+                this.opacity -= 0.002;
+                if (this.y < 0 || this.opacity <= 0) {
+                    this.y = particleCanvas.height;
+                    this.opacity = Math.random() * 0.3 + 0.2;
+                    this.x = Math.random() * particleCanvas.width;
+                }
+            }
+
+            draw() {
+                particleCtx.fillStyle = `rgba(239, 68, 68, ${this.opacity})`;
+                particleCtx.beginPath();
+                particleCtx.ellipse(this.x, this.y, this.size, this.size * 0.6, 0, 0, Math.PI * 2);
+                particleCtx.fill();
+                particleCtx.fillStyle = `rgba(200, 0, 0, ${this.opacity * 0.5})`;
+                particleCtx.beginPath();
+                particleCtx.ellipse(this.x, this.y, this.size * 0.7, this.size * 0.4, 0, 0, Math.PI * 2);
+                particleCtx.fill();
+            }
+        }
+
+        function initParticles() {
+            particles.length = 0;
+            for (let i = 0; i < 20; i++) {
+                particles.push(new Particle());
+            }
+        }
+
+        function animateParticles() {
+            const formSection = document.getElementById('form-section');
+            if (!formSection) return;
+            const formRect = formSection.getBoundingClientRect();
+            const formTop = formRect.top + window.scrollY;
+            particleCanvas.width = 200;
+            particleCanvas.height = formTop;
+
+            particleCtx.clearRect(0, 0, particleCanvas.width, particleCanvas.height);
+            particles.forEach(particle => {
+                particle.update();
+                particle.draw();
+            });
+            requestAnimationFrame(animateParticles);
+        }
+
+        initParticles();
+        animateParticles();
+
+        // Resize canvas on window resize and scroll
+        function updateCanvasSize() {
+            const formSection = document.getElementById('form-section');
+            if (!formSection) return;
+            const formRect = formSection.getBoundingClientRect();
+            const formTop = formRect.top + window.scrollY;
+            particleCanvas.width = 200;
+            particleCanvas.height = formTop;
+            initParticles();
+        }
+
+        window.addEventListener('resize', updateCanvasSize);
+        window.addEventListener('scroll', updateCanvasSize);
+
+        // Initial canvas size
+        updateCanvasSize();
     </script>
 </body>
 </html>

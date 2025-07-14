@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Heart Disease Prediction Result</title>
+    <title>HeartWise - Prediction Result</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body {
@@ -13,15 +13,17 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            background-color: #FEE2E2; /* Soft red background */
-            font-family: 'Arial', sans-serif;
-            color: #1F2937; /* Dark grey for readability */
+            background: linear-gradient(to bottom, #1a1a1a 0%, #2a2a2a 50%, #1a1a1a 100%);
+            background-attachment: fixed;
+            font-family: Arial, sans-serif;
+            color: #E5E7EB;
+            position: relative;
         }
         .result-container {
-            background-color: white;
+            background: rgba(31, 41, 55, 0.95);
             border-radius: 12px;
             padding: 2rem;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
             max-width: 600px;
             width: 90%;
             text-align: center;
@@ -32,8 +34,8 @@
             to { opacity: 1; transform: translateY(0); }
         }
         .result-card {
-            background-color: #FFF7ED; /* Warm off-white */
-            border-left: 4px solid #DC2626; /* Red accent */
+            background-color: #374151;
+            border-left: 4px solid #EF4444;
             border-radius: 8px;
             padding: 1.5rem;
             margin: 1rem 0;
@@ -41,50 +43,105 @@
         }
         .result-card:hover {
             transform: translateY(-3px);
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
         }
         .error-message {
-            background-color: #FEE2E2; /* Soft red for errors */
-            color: #DC2626;
+            background-color: rgba(239, 68, 68, 0.2);
+            color: #E5E7EB;
             padding: 1rem;
             border-radius: 8px;
             margin: 1rem 0;
             font-weight: 500;
         }
         h1 {
-            color: #DC2626; /* Vibrant red for heading */
-            font-size: 2.25rem !important;
-            
+            color: #EF4444;
+            font-size: 2.25rem;
             font-weight: 900;
             margin-bottom: 1.5rem;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
         }
         .result-value {
             font-size: 1.875rem;
             font-weight: bold;
-            color: #1F2937;
+            color: #E5E7EB;
         }
         .result-label {
             font-size: 1.125rem;
-            color: #4B5563; /* Medium grey for labels */
+            color: #D1D5DB;
             margin-bottom: 0.5rem;
         }
         .back-button {
-            background-color: #10B981; /* Green for positive action */
+            background-color: #10B981;
             color: white;
             padding: 0.75rem 1.5rem;
             border-radius: 8px;
             text-decoration: none;
-            transition: background-color 0.3s ease;
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
         }
         .back-button:hover {
-            background-color: #059669; /* Darker green on hover */
+            background-color: #059669;
+            box-shadow: 0 0 10px #60A5FA, 0 0 20px #EF4444, 0 0 30px #60A5FA;
+        }
+        .advice-card {
+            background-color: #1E3A8A;
+            border-left: 4px solid #3B82F6;
+            color: #E5E7EB;
+        }
+        nav {
+            background: rgba(185, 28, 28, 0.9);
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 50;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        nav .content-container {
+            background: none;
+            padding: 0;
+        }
+        nav a {
+            color: white;
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            transition: box-shadow 0.3s ease, background-color 0.3s;
+        }
+        nav a:hover {
+            background-color: rgba(127, 29, 29, 0.8);
+            box-shadow: 0 0 10px #60A5FA, 0 0 20px #EF4444, 0 0 30px #60A5FA;
+        }
+        #particle-canvas {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 200px;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.5;
         }
     </style>
 </head>
 <body>
-     
-    <div class="result-container">
-    <h1>Heart Disease Prediction</h1> 
+    <!-- Preload Background Image -->
+    <img src="{% static 'images/heart.jpeg' %}" style="display: none;" onload="console.log('Local background image loaded');" onerror="console.log('Local background image failed');">
+
+    <!-- Particle Animation Canvas -->
+    <canvas id="particle-canvas"></canvas>
+
+    <!-- Navigation Bar -->
+    <nav class="py-4">
+        <div class="content-container max-w-6xl mx-auto px-4 flex justify-between items-center">
+            <a href="#" class="text-xl font-bold text-white">HeartWise</a>
+            <div class="flex space-x-4">
+                <a href="{% url 'home' %}">Home</a>
+                <a href="{% url 'home' %}#section-2">Risk Factors</a>
+                <a href="{% url 'home' %}#section-3">Prevention</a>
+                <a href="{% url 'home' %}">Assessment</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="result-container mt-20">
+        <h1>Heart Disease Prediction</h1>
         {% if messages %}
             {% for message in messages %}
                 <div class="error-message">{{ message }}</div>
@@ -105,18 +162,18 @@
             </div>
             <div class="result-card">
                 <div class="result-label">Severity Score</div>
-                <div class="result-value text-red-600">{{ severity }}/100 <span class="text-gray-600">({{ severity_level }})</span></div>
+                <div class="result-value text-red-600">{{ severity }}/100 <span class="text-gray-400">({{ severity_level }})</span></div>
+            </div>
+            <div class="result-card advice-card">
+                <div class="result-label">Advice</div>
+                <div class="result-value text-lg font-semibold">{{ advice_message }}</div>
             </div>
         </div>
-    <div class="result-card bg-blue-50 border-blue-400 text-blue-900">
-    <div class="result-label">Advice</div>
-    <div class="result-value text-lg font-semibold">{{ advice_message }}</div>
-    </div>
         <a href="{% url 'home' %}" class="back-button mt-6 inline-block">Back to Home</a>
     </div>
-   
 
     <script>
+        // Fade-in animation
         document.addEventListener('DOMContentLoaded', () => {
             const container = document.querySelector('.result-container');
             container.style.opacity = '0';
@@ -124,6 +181,85 @@
                 container.style.opacity = '1';
             }, 100);
         });
+
+        // Particle Animation with RBC Shapes
+        const particleCanvas = document.getElementById('particle-canvas');
+        const particleCtx = particleCanvas.getContext('2d');
+        const particles = [];
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * particleCanvas.width;
+                this.y = Math.random() * particleCanvas.height;
+                this.size = Math.random() * 5 + 3;
+                this.speedY = Math.random() * -1.5 - 0.5;
+                this.opacity = Math.random() * 0.3 + 0.2;
+            }
+
+            update() {
+                this.y += this.speedY;
+                this.opacity -= 0.002;
+                if (this.y < 0 || this.opacity <= 0) {
+                    this.y = particleCanvas.height;
+                    this.opacity = Math.random() * 0.3 + 0.2;
+                    this.x = Math.random() * particleCanvas.width;
+                }
+            }
+
+            draw() {
+                particleCtx.fillStyle = `rgba(239, 68, 68, ${this.opacity})`;
+                particleCtx.beginPath();
+                particleCtx.ellipse(this.x, this.y, this.size, this.size * 0.6, 0, 0, Math.PI * 2);
+                particleCtx.fill();
+                particleCtx.fillStyle = `rgba(200, 0, 0, ${this.opacity * 0.5})`;
+                particleCtx.beginPath();
+                particleCtx.ellipse(this.x, this.y, this.size * 0.7, this.size * 0.4, 0, 0, Math.PI * 2);
+                particleCtx.fill();
+            }
+        }
+
+        function initParticles() {
+            particles.length = 0;
+            for (let i = 0; i < 20; i++) {
+                particles.push(new Particle());
+            }
+        }
+
+        function animateParticles() {
+            const resultContainer = document.querySelector('.result-container');
+            if (!resultContainer) return;
+            const resultRect = resultContainer.getBoundingClientRect();
+            const resultTop = resultRect.top + window.scrollY;
+            particleCanvas.width = 200;
+            particleCanvas.height = resultTop;
+
+            particleCtx.clearRect(0, 0, particleCanvas.width, particleCanvas.height);
+            particles.forEach(particle => {
+                particle.update();
+                particle.draw();
+            });
+            requestAnimationFrame(animateParticles);
+        }
+
+        initParticles();
+        animateParticles();
+
+        // Resize canvas on window resize and scroll
+        function updateCanvasSize() {
+            const resultContainer = document.querySelector('.result-container');
+            if (!resultContainer) return;
+            const resultRect = resultContainer.getBoundingClientRect();
+            const resultTop = resultRect.top + window.scrollY;
+            particleCanvas.width = 200;
+            particleCanvas.height = resultTop;
+            initParticles();
+        }
+
+        window.addEventListener('resize', updateCanvasSize);
+        window.addEventListener('scroll', updateCanvasSize);
+
+        // Initial canvas size
+        updateCanvasSize();
     </script>
 </body>
 </html>

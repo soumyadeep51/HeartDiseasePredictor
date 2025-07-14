@@ -1,0 +1,312 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HeartWise - Login</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            min-height: 100vh;
+            background: linear-gradient(to bottom, #1a1a1a 0%, #2a2a2a 50%, #1a1a1a 100%);
+            background-attachment: fixed;
+            font-family: Arial, sans-serif;
+            color: #E5E7EB;
+            display: flex;
+            flex-direction: column;
+        }
+        main {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+        }
+        .form-container {
+            background: rgba(31, 41, 55, 0.95);
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            max-width: 600px;
+            width: 90%;
+            text-align: center;
+            animation: slideUp 0.6s ease-out;
+            z-index: 10;
+            margin-top: 6rem;
+            margin-bottom: 2rem;
+        }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .form-container h2 {
+            color: #EF4444;
+            font-size: 2.75rem !important;
+            font-weight: 900;
+            line-height: 1.2 !important;
+            margin-bottom: 1.5rem;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+            text-transform: uppercase;
+        }
+        .message {
+            background-color: rgba(59, 130, 246, 0.2);
+            color: #E5E7EB;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+            font-weight: 500;
+        }
+        form p {
+            margin: 0.5rem 0;
+        }
+        label {
+            color: #D1D5DB;
+            font-size: 1.125rem;
+            display: block;
+            text-align: left;
+            margin-bottom: 0.5rem;
+        }
+        input[type="text"],
+        input[type="password"] {
+            background-color: #374151;
+            color: #E5E7EB;
+            border: 1px solid #4B5563;
+            padding: 0.75rem;
+            border-radius: 8px;
+            width: 100%;
+            box-sizing: border-box;
+            transition: border-color 0.3s ease;
+            min-width: 100px;
+            font-size: 1rem;
+        }
+        input:focus {
+            outline: none;
+            border-color: #EF4444;
+        }
+        .form-container button {
+            background-color: #10B981;
+            color: white;
+            padding: 1.25rem 2.5rem !important;
+            border-radius: 8px;
+            border: none;
+            font-size: 1.25rem !important;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+            min-width: 160px !important;
+            display: inline-block;
+        }
+        .form-container button:hover {
+            background-color: #059669;
+            box-shadow: 0 0 10px #60A5FA, 0 0 20px #EF4444, 0 0 30px #60A5FA;
+        }
+        .register-link a {
+            color: #E5E7EB;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        .register-link a:hover {
+            color: #EF4444;
+            text-decoration: underline;
+        }
+        nav {
+            background: rgba(185, 28, 28, 0.9);
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 50;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        nav .content-container {
+            background: none;
+            padding: 0;
+        }
+        nav a {
+            color: white;
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            transition: box-shadow 0.3s ease, background-color 0.3s;
+        }
+        nav a:hover {
+            background-color: rgba(127, 29, 29, 0.8);
+            box-shadow: 0 0 10px #60A5FA, 0 0 20px #EF4444, 0 0 30px #60A5FA;
+        }
+        #particle-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            z-index: -1;
+            opacity: 0.5;
+        }
+        footer {
+            background: rgba(185, 28, 28, 0.7);
+            width: 100%;
+            text-align: center;
+            padding: 1rem 0;
+            color: #FFFFFF;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+        }
+    </style>
+</head>
+<body>
+    <!-- Preload Background Image -->
+    <img src="{% static 'images/heart.jpeg' %}" style="display: none;" onload="console.log('Local background image loaded');" onerror="console.log('Local background image failed');">
+
+    <!-- Main Content -->
+    <main>
+        <!-- Particle Animation Canvas -->
+        <canvas id="particle-canvas"></canvas>
+
+        <!-- Navigation Bar -->
+        <nav class="py-4">
+            <div class="content-container max-w-6xl mx-auto px-4 flex justify-between items-center">
+                <a href="#" class="text-xl font-bold text-white">HeartWise</a>
+                <div class="flex space-x-4">
+                    <a href="{% url 'home' %}">Home</a>
+                    <a href="{% url 'home' %}#section-2">Risk Factors</a>
+                    <a href="{% url 'home' %}#section-3">Prevention</a>
+                    <a href="{% url 'register' %}">Register</a>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Login Form -->
+        <div class="form-container">
+            <h2>Login</h2>
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="message">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+            <form method="POST" class="space-y-4">
+                {% csrf_token %}
+                <p>
+                    <label for="username">Username:</label>
+                    <input type="text" name="username" id="username" required>
+                </p>
+                <p>
+                    <label for="password">Password:</label>
+                    <input type="password" name="password" id="password" required>
+                </p>
+                <button type="submit">Login</button>
+            </form>
+            <p class="register-link mt-4">Don't have an account? <a href="{% url 'register' %}">Register</a></p>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="content-container max-w-4xl mx-auto px-4">
+            <p>© 2025 HeartWise. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Fade-in animation
+        document.addEventListener('DOMContentLoaded', () => {
+            const container = document.querySelector('.form-container');
+            container.style.opacity = '0';
+            setTimeout(() => {
+                container.style.opacity = '1';
+            }, 100);
+
+            // Debug computed styles
+            const heading = document.querySelector('.form-container h2');
+            const button = document.querySelector('.form-container button');
+            console.log('Heading font-size:', getComputedStyle(heading).fontSize);
+            console.log('Button font-size:', getComputedStyle(button).fontSize);
+            console.log('Button padding:', getComputedStyle(button).padding);
+            console.log('Button min-width:', getComputedStyle(button).minWidth);
+        });
+
+        // Enhanced Particle Animation with RBC Shapes
+        const particleCanvas = document.getElementById('particle-canvas');
+        const particleCtx = particleCanvas.getContext('2d');
+        const particles = [];
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * particleCanvas.width;
+                this.y = particleCanvas.height;
+                this.size = Math.random() * 3 + 1;
+                this.speedX = (Math.random() - 0.5) * 1;
+                this.speedY = Math.random() * -1.5 - 0.5;
+                this.opacity = Math.random() * 0.3 + 0.2;
+                this.phase = Math.random() * Math.PI * 2;
+                this.rotation = Math.random() * Math.PI / 4;
+            }
+
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                this.phase += 0.05;
+                this.opacity = 0.2 + Math.sin(this.phase) * 0.15;
+                this.rotation += 0.01;
+                if (this.y < 0 || this.x < 0 || this.x > particleCanvas.width) {
+                    this.y = particleCanvas.height;
+                    this.x = Math.random() * particleCanvas.width;
+                    this.opacity = Math.random() * 0.3 + 0.2;
+                    this.phase = Math.random() * Math.PI * 2;
+                    this.rotation = Math.random() * Math.PI / 4;
+                }
+            }
+
+            draw() {
+                particleCtx.save();
+                particleCtx.translate(this.x, this.y);
+                particleCtx.rotate(this.rotation);
+                particleCtx.fillStyle = `rgba(239, 68, 68, ${this.opacity})`;
+                particleCtx.beginPath();
+                particleCtx.ellipse(0, 0, this.size, this.size * 0.6, 0, 0, Math.PI * 2);
+                particleCtx.fill();
+                particleCtx.fillStyle = `rgba(200, 0, 0, ${this.opacity * 0.5})`;
+                particleCtx.beginPath();
+                particleCtx.ellipse(0, 0, this.size * 0.7, this.size * 0.4, 0, 0, Math.PI * 2);
+                particleCtx.fill();
+                particleCtx.restore();
+            }
+        }
+
+        function initParticles() {
+            particles.length = 0;
+            for (let i = 0; i < 30; i++) {
+                particles.push(new Particle());
+            }
+        }
+
+        function animateParticles() {
+            particleCanvas.width = window.innerWidth;
+            particleCanvas.height = window.innerHeight;
+            particleCtx.clearRect(0, 0, particleCanvas.width, particleCanvas.height);
+            particles.forEach(particle => {
+                particle.update();
+                particle.draw();
+            });
+            requestAnimationFrame(animateParticles);
+        }
+
+        initParticles();
+        animateParticles();
+
+        // Resize canvas on window resize
+        function updateCanvasSize() {
+            particleCanvas.width = window.innerWidth;
+            particleCanvas.height = window.innerHeight;
+            initParticles();
+        }
+
+        window.addEventListener('resize', updateCanvasSize);
+
+        // Initial canvas size
+        updateCanvasSize();
+    </script>
+</body>
+</html>
