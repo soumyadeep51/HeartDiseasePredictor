@@ -2,8 +2,8 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth import authenticate, login
 from django.http import JsonResponse
-from .models import HeartPrediction,Profile
-from .forms import CustomUserRegisterForm
+from .models import HeartPrediction,Profile,Feedback
+from .forms import CustomUserRegisterForm,FeedbackForm
 from django.contrib.auth.decorators import login_required
 import joblib
 import numpy as np
@@ -184,5 +184,27 @@ def login_view(request):
             messages.error(request, 'Invalid username or password.')
 
     return render(request, 'login.html')
+@login_required
+def submit_feedback(request):
+    if request.method == 'POST':
+        form = FeedbackForm(request.POST)
+        if form.is_valid():
+            feedback = form.save(commit=False)
+            feedback.user = request.user  # Set the user
+            feedback.save()
+            return redirect('home')  # Replace with your success URL name
+    else:
+        form = FeedbackForm()
+
+    return render(request, 'feedback.html', {'form': form})
+def prediction_form(request):
+     return render(request,'prediction_form.html')
+
+def feedback_list(request):
+    feedbacks = Feedback.objects.all()
+    return render(request, 'feedback/feedback_list.html', {'feedbacks': feedbacks})
+def parameters(request):
+    print("User:", request.user)
+    return render(request, 'parameters.html')
 
 

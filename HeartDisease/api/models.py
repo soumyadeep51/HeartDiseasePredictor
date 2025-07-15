@@ -9,7 +9,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-
+from django.core.validators import MinValueValidator, MaxValueValidator
 def load_and_prepare_data():
     # Load the provided heart.csv dataset
     data = pd.read_csv('heart.csv')
@@ -122,5 +122,18 @@ class Profile(models.Model):
 """@receiver(post_save, sender=User)
 def save_user_profile(sender, instance, **kwargs):
     instance.profile.save()"""
+class Feedback(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    comment = models.TextField()
+    rating = models.IntegerField(
+        choices=[(i, str(i)) for i in range(1, 6)],
+        validators=[MinValueValidator(1), MaxValueValidator(5)]
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
 
+    def __str__(self):
+        return f"Feedback from {self.user.username} - {self.rating} stars"
+
+    class Meta:
+        ordering = ['-created_at']
 

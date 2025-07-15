@@ -173,9 +173,9 @@
             <a href="#" class="text-xl font-bold text-white">HeartWise</a>
             <div class="flex space-x-4">
                 <a href="#header" onclick="scrollToSection('header')">Home</a>
-                <a href="#section-2" onclick="scrollToSection('section-2')">Risk Factors</a>
-                <a href="#section-3" onclick="scrollToSection('section-3')">Prevention</a>
-                <a href="#form-section" onclick="scrollToSection('form-section')">Assessment</a>
+                  <a href="{% url 'predict' %}">Prediction</a> 
+                 <a href="{% url 'parameters' %}">Parameters</a>
+                 <a href="{% url 'feedback' %}">Feedback</a>
             </div>
         </div>
     </nav>
@@ -193,7 +193,8 @@ Understanding your personal risk is the first step toward prevention. When you r
 That’s where HeartWise comes in. Our platform is designed to help you assess your individual risk levels, understand how lifestyle and genetics may be affecting your heart, and guide you toward evidence-based actions you can take immediately. Whether you’re already managing a heart condition or simply aiming to prevent one, HeartWise provides you with the tools and knowledge to take control of your heart health — today and every day.
 
 Let HeartWise be your companion in this journey to a stronger, healthier heart.</p>
-            <button id="assess-risk-btn" onclick="scrollToForm()" class="text-white font-semibold py-2 px-6 rounded-full">Assess Your Risk</button>
+            <button id="assess-risk-btn" class="text-white font-semibold py-2 px-6 rounded-full bg-red-500 hover:bg-red-700">
+  Assess Your Risk</button>
         </div>
     </header>
 
@@ -248,86 +249,7 @@ Let HeartWise be your companion in this journey to a stronger, healthier heart.<
         </section>
     </main>
 
-    <!-- Risk Assessment Form -->
-    <section id="form-section" class="py-12">
-        <div class="content-container max-w-lg mx-auto px-4">
-            <h2 class="text-3xl font-bold text-center mb-6">Check Your Heart Disease Risk</h2>
-            <form id="risk-form" class="space-y-4" action="{% url 'predict' %}" method="post">
-                {% csrf_token %}
-                <div>
-                    <label for="Age" class="block text-sm font-medium">Age (28–77)</label>
-                    <input type="number" id="Age" name="Age" min="28" max="77" required class="mt-1 w-full p-2 border rounded-md">
-                </div>
-                <div>
-                    <label for="Sex" class="block text-sm font-medium">Gender</label>
-                    <select id="Sex" name="Sex" required class="mt-1 w-full p-2 border rounded-md">
-                        <option value="" disabled selected>Select</option>
-                        <option value="1">Male</option>
-                        <option value="0">Female</option>
-                    </select>
-                </div>
-                <div>
-                    <label for="ChestPainType" class="block text-sm font-medium">Chest Pain Type</label>
-                    <select id="ChestPainType" name="ChestPainType" required class="mt-1 w-full p-2 border rounded-md">
-                        <option value="" disabled selected>Select</option>
-                        <option value="0">ATA (Atypical Angina)</option>
-                        <option value="1">NAP (Non-Anginal Pain)</option>
-                        <option value="2">ASY (Asymptomatic)</option>
-                        <option value="3">TA (Typical Angina)</option>
-                    </select>
-                </div>
-                <div>
-                    <label for="RestingBP" class="block text-sm font-medium">Resting Blood Pressure (80–200 mmHg)</label>
-                    <input type="number" id="RestingBP" name="RestingBP" min="80" max="200" required class="mt-1 w-full p-2 border rounded-md">
-                </div>
-                <div>
-                    <label for="Cholesterol" class="block text-sm font-medium">Cholesterol (100–603 mg/dl)</label>
-                    <input type="number" id="Cholesterol" name="Cholesterol" min="100" max="603" required class="mt-1 w-full p-2 border rounded-md">
-                </div>
-                <div>
-                    <label for="FastingBS" class="block text-sm font-medium">Fasting Blood Sugar (>120 mg/dl)</label>
-                    <select id="FastingBS" name="FastingBS" required class="mt-1 w-full p-2 border rounded-md">
-                        <option value="" disabled selected>Select</option>
-                        <option value="0">No</option>
-                        <option value="1">Yes</option>
-                    </select>
-                </div>
-                <div>
-                    <label for="RestingECG" class="block text-sm font-medium">Resting ECG</label>
-                    <select id="RestingECG" name="RestingECG" required class="mt-1 w-full p-2 border rounded-md">
-                        <option value="" disabled selected>Select</option>
-                        <option value="1">Normal</option>
-                        <option value="2">ST (ST-T abnormality)</option>
-                        <option value="0">LVH (Left Ventricular Hypertrophy)</option>
-                    </select>
-                </div>
-                <div>
-                    <label for="MaxHR" class="block text-sm font-medium">Max Heart Rate (60–202)</label>
-                    <input type="number" id="MaxHR" name="MaxHR" min="60" max="202" required class="mt-1 w-full p-2 border rounded-md">
-                </div>
-                <div>
-                    <label for="ExerciseAngina" class="block text-sm font-medium">Exercise Angina</label>
-                    <select id="ExerciseAngina" name="ExerciseAngina" required class="mt-1 w-full p-2 border rounded-md">
-                        <option value="" disabled selected>Select</option>
-                        <option value="0">No</option>
-                        <option value="1">Yes</option>
-                    </select>
-                </div>
-                <div>
-                    <label for="Oldpeak" class="block text-sm font-medium">Oldpeak (ST Depression, -2.6 to 6.2)</label>
-                    <input type="number" id="Oldpeak" name="Oldpeak" step="0.1" min="-2.6" max="6.2" required class="mt-1 w-full p-2 border rounded-md">
-                </div>
-                <div>
-                    <label for="ST_Slope" class="block text-sm font-medium">ST Slope</label>
-                    <select id="ST_Slope" name="ST_Slope" required class="mt-1 w-full p-2 border rounded-md">
-                        <option value="" disabled selected>Select</option>
-                        <option value="2">Up</option>
-                        <option value="1">Flat</option>
-                        <option value="0">Down</option>
-                    </select>
-                </div>
-                <button type="submit" class="calculate-risk-btn w-full text-white p-2 rounded">Calculate Risk</button>
-            </form>
+    
             <div id="result" class="mt-6 hidden p-4 rounded-lg"></div>
             <div id="error" class="mt-6 hidden p-4 rounded-lg"></div>
         </div>
@@ -673,6 +595,9 @@ Let HeartWise be your companion in this journey to a stronger, healthier heart.<
 
         // Initial canvas size
         updateCanvasSize();
+        document.getElementById("assess-risk-btn").addEventListener("click", function() {
+    window.location.href = "{% url 'parameters' %}";
+  });
     </script>
 </body>
 </html>

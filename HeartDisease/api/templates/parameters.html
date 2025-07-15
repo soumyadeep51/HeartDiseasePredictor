@@ -1,0 +1,253 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HeartWise - Heart Health Parameters Explained</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            min-height: 100vh;
+            background: linear-gradient(to bottom, #1a1a1a 0%, #2a2a2a 50%, #1a1a1a 100%);
+            background-attachment: fixed;
+            font-family: Arial, sans-serif;
+            color: #E5E7EB;
+            display: flex;
+            flex-direction: column;
+        }
+        main {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+        }
+        .content-container {
+            background: rgba(31, 41, 55, 0.95);
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            max-width: 800px;
+            width: 90%;
+            text-align: left;
+            margin-top: 4.5rem;
+            margin-bottom: 2rem;
+        }
+        .content-container h2 {
+            color: #EF4444;
+            font-size: 2.75rem !important;
+            font-weight: 900;
+            line-height: 1.2 !important;
+            margin-bottom: 1.5rem;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+            text-transform: uppercase;
+            text-align: center;
+        }
+        .content-container h3 {
+            color: #E5E7EB;
+            font-size: 2rem;
+            font-weight: 700;
+            margin-top: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .content-container p {
+            font-size: 1.125rem;
+            color: #D1D5DB;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+        .chart-container {
+            max-width: 800px;
+            width: 100%;
+            margin: 2rem auto;
+            padding: 1rem;
+            background: rgba(31, 41, 55, 0.95);
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+        canvas {
+            max-width: 100%;
+        }
+
+        nav {
+            background: rgba(185, 28, 28, 0.9);
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 50;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        nav .nav-inner {
+            padding: 0 1rem;
+            background: none;
+        }
+
+        nav a {
+            color: white;
+            font-weight: 500;
+            padding: 0.375rem 0.75rem;
+            font-size: 0.875rem;
+            transition: box-shadow 0.3s ease, background-color 0.3s;
+        }
+        nav a:hover {
+            background-color: rgba(127, 29, 29, 0.8);
+            box-shadow: 0 0 10px #60A5FA, 0 0 20px #EF4444, 0 0 30px #60A5FA;
+        }
+        nav .logo {
+            font-size: 1.125rem;
+            font-weight: 700;
+        }
+
+        footer {
+            background: rgba(185, 28, 28, 0.7);
+            width: 100%;
+            text-align: center;
+            padding: 1rem 0;
+            color: #FFFFFF;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+        }
+    </style>
+</head>
+<body>
+    <!-- Preload Background Image -->
+    <img src="{% static 'images/heart.jpeg' %}" style="display: none;" onload="console.log('Local background image loaded');" onerror="console.log('Local background image failed');">
+
+    <!-- Main Content -->
+    <main>
+        <!-- Navigation Bar -->
+        <nav class="py-1">
+            <div class="nav-inner max-w-6xl mx-auto flex justify-between items-center">
+                <a href="#" class="logo text-white">HeartWise</a>
+                <div class="flex space-x-4">
+                    <a href="{% url 'home' %}">Home</a>
+                    <a href="{% url 'home' %}#section-2">Risk Factors</a>
+                    <a href="{% url 'home' %}#section-3">Prevention</a>
+                    <a href="{% url 'parameters' %}">Parameters</a>
+                    <a href="{% url 'login' %}">Login</a>
+                    <a href="{% url 'register' %}">Register</a>
+                    <a href="{% url 'feedback' %}">Feedback</a>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Parameters Explanation -->
+        <div class="content-container">
+            <h2>Heart Health Parameters Explained</h2>
+            <h3>Age</h3>
+            <p>Age is a key risk factor for heart disease. As people age, the risk of cardiovascular issues increases due to factors like arterial stiffening and cumulative lifestyle effects.</p>
+
+            <h3>Sex</h3>
+            <p>Sex refers to biological male or female classification. Men and women have different heart disease risk profiles, with men typically at higher risk earlier in life and women’s risk increasing post-menopause.</p>
+
+            <h3>Chest Pain Type</h3>
+            <p>Chest pain type categorizes the nature of chest discomfort (e.g., typical angina, atypical angina, non-anginal pain, or asymptomatic).</p>
+
+            <h3>Resting Blood Pressure (RestingBP)</h3>
+            <p>Resting blood pressure measures the force of blood against artery walls at rest (in mmHg).</p>
+
+            <h3>Cholesterol</h3>
+            <p>Cholesterol levels (in mg/dL) measure total blood cholesterol, including LDL (“bad”) and HDL (“good”) cholesterol.</p>
+
+            <h3>Fasting Blood Sugar (FastingBS)</h3>
+            <p>Fasting blood sugar indicates blood glucose levels after fasting. Elevated levels are associated with increased heart disease risk.</p>
+
+            <h3>Resting Electrocardiogram (RestingECG)</h3>
+            <p>Resting ECG results reflect the heart’s electrical activity at rest. Abnormal results may indicate underlying heart conditions.</p>
+
+            <h3>Maximum Heart Rate (MaxHR)</h3>
+            <p>Maximum heart rate achieved during exercise testing indicates heart performance under stress.</p>
+
+            <h3>Exercise Angina</h3>
+            <p>Exercise angina indicates whether chest pain occurs during physical exertion. Its presence suggests possible coronary artery disease.</p>
+
+            <h3>Oldpeak</h3>
+            <p>Oldpeak measures ST-segment depression on an ECG during exercise compared to rest.</p>
+
+            <h3>ST Slope</h3>
+            <p>ST slope describes the slope of the ST-segment during exercise ECG. Flat or downsloping segments are associated with increased risk.</p>
+
+            <!-- Graph Section -->
+            <h2>Impact on Heart Disease Risk</h2>
+            <p>The chart below shows the relative impact of each parameter on the probability of heart disease (0–100 scale).</p>
+            <div class="chart-container">
+                <canvas id="heartDiseaseChart"></canvas>
+            </div>
+        </div>
+                  <button id="assess-risk-btn" class="text-white font-semibold py-2 px-6 rounded-full bg-red-500 hover:bg-red-700">
+  Assess Your Risk</button>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="content-container max-w-4xl mx-auto px-4">
+            <p>© 2025 HeartWise. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Chart.js Bar Chart
+         document.getElementById("assess-risk-btn").addEventListener("click", function() {
+    window.location.href = "{% url 'prediction_form' %}";
+  });
+        const ctx = document.getElementById('heartDiseaseChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['Age', 'Sex', 'Chest Pain', 'Resting BP', 'Cholesterol', 'Fasting BS', 'Resting ECG', 'Max HR', 'Exercise Angina', 'Oldpeak', 'ST Slope'],
+                datasets: [{
+                    label: 'Relative Impact on Heart Disease Risk (%)',
+                    data: [60, 40, 85, 70, 65, 55, 50, 60, 80, 85, 90],
+                    backgroundColor: '#EF4444',
+                    borderColor: '#60A5FA',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100,
+                        title: {
+                            display: true,
+                            text: 'Impact (%)',
+                            color: '#E5E7EB',
+                            font: { size: 14 }
+                        },
+                        ticks: { color: '#E5E7EB' }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Parameter',
+                            color: '#E5E7EB',
+                            font: { size: 14 }
+                        },
+                        ticks: {
+                            color: '#E5E7EB',
+                            callback: function(value, index, values) {
+                                const labels = ['Age', 'Sex', 'Chest Pain', 'Resting BP', 'Cholesterol', 'Fasting BS', 'Resting ECG', 'Max HR', 'Exercise Angina', 'Oldpeak', 'ST Slope'];
+                                return labels[index].length > 10 ? labels[index].substring(0, 10) + '...' : labels[index];
+                            }
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        labels: { color: '#E5E7EB' }
+                    },
+                    tooltip: { backgroundColor: '#1a1a1a', bodyColor: '#E5E7EB', titleColor: '#E5E7EB' }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
+
